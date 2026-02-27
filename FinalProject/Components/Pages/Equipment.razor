@@ -1,0 +1,62 @@
+﻿@page "/equipment"
+@using FinalProject.Data
+@using DataEquipment = FinalProject.Data.Equipment
+@inject Broker Broker
+@inject NavigationManager Nav
+
+<input class="search" placeholder="Find Equipment" @bind="searchText" />
+<button class="add-btn" @onclick="AddEquipment">Add New Equipment</button>
+
+<div class="item-list">
+    @if (loading)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else if (items == null || !items.Any())
+    {
+        <p>No equipment found.</p>
+    }
+    else
+    {
+        @foreach (DataEquipment i in FilteredItems)
+        {
+            <button class="item-btn" @onclick="() => EditEquipment(i.EquipmentID)">
+                <span>@i.EquipmentID - @i.Name</span>
+
+                <span class="status-badge @(i.Status ? "available" : "unavailable")">
+                    @(i.Status ? "Available" : "Unavailable")
+                </span>
+            </button>
+        }
+    }
+</div>
+
+@code {
+    List<DataEquipment>? items;
+    string searchText = "";
+    bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    async Task Load()
+    {
+        loading = true;
+        items = await Broker.LoadAllEquipmentAsync();
+        loading = false;
+    }
+
+    IEnumerable<DataEquipment> FilteredItems =>
+    string.IsNullOrWhiteSpace(searchText)
+    ? ((IEnumerable<DataEquipment>?)items ?? Enumerable.Empty<DataEquipment>())
+    : ((IEnumerable<DataEquipment>?)items ?? Enumerable.Empty<DataEquipment>())
+    .Where(i =>
+    (i.Name ?? string.Empty).Contains(searchText, StringComparison.OrdinalIgnoreCase)
+    || i.EquipmentID.ToString().Contains(searchText)
+    );
+
+    void AddEquipment() => Nav.NavigateTo(uri: "/equipmentInfo/0");
+    void EditEquipment(int id) => Nav.NavigateTo(uri: $"/equipmentInfo/{id}");
+}

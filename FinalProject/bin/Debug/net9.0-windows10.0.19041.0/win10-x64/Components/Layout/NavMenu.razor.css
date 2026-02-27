@@ -1,0 +1,58 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: #3b3b3b;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 350px;
+}
+
+.list {
+    font-size: 36px;
+    width: 100%;
+    text-align: left;
+    padding-right: 1.5rem;
+    margin-left: 30px;
+}
+
+.list ::deep a {
+    text-decoration: none;
+    color: #6658f5;
+}
+
+.list ::deep a.active,
+.list ::deep a:hover {
+    text-decoration: none;
+    color: #6658f5;
+    text-shadow: 1.5px 0 0 currentColor;
+}
+
+@media (max-width: 700px) {
+    .sidebar {
+        flex-direction: row;
+        height: auto;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        left: 0;
+        z-index: 1000;
+        justify-content: space-around;
+        padding: 5px 0;
+        overflow-y: visible;
+    }
+
+    .list {
+        font-size: 20px;
+        text-align: center;
+        margin-left: 0;
+        padding-right: 0;
+        width: auto;
+        flex-grow: 1;
+    }
+
+    .list ::deep a {
+        padding: 5px;
+    }
+}

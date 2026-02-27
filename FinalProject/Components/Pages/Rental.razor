@@ -1,0 +1,82 @@
+﻿@page "/Rental"
+@using FinalProject.Data
+@using DataRental = FinalProject.Data.Rental
+@using DataEquipment = FinalProject.Data.Equipment
+@using DataCustomer = FinalProject.Data.Customer
+@inject Broker Broker
+@inject NavigationManager Nav
+
+
+<input class="search" placeholder="Find Rental" @bind="searchText" />
+<button class="add-btn" @onclick="CreateNew">Add New Rental</button>
+
+
+<div class="rental-list">
+    @if (loading)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else if (rental == null || !rental.Any())
+    {
+        <p>No rentals found.</p>
+    }
+    else
+    {
+        @foreach (DataRental r in FilteredRentals)
+        {
+            <div class="rental-row" @onclick="() => Edit(r.RentalID)">
+                <div>
+                    <strong>#@r.RentalID</strong>
+                    &nbsp; @CustomerName(r.CustomerID) - @EquipmentName(r.EquipmentID)
+                </div>
+                <div>
+                    @r.RentalDate.ToString(format: "yyyy-MM-dd")
+                    &nbsp;→&nbsp;
+                    @(r.ReturnDate?.ToString(format: "yyyy-MM-dd") ?? "Ongoing")
+                    &nbsp; • &nbsp;Total: @r.TotalCost.ToString(format: "C")
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    List<DataRental>? rental;
+    List<DataCustomer>? customer;
+    List<DataEquipment>? equipment;
+    string searchText = "";
+    bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    async Task Load()
+    {
+        loading = true;
+        rental = await Broker.LoadAllRentalsAsync();
+        customer = await Broker.LoadAllCustomersAsync();
+        equipment = await Broker.LoadAllEquipmentAsync();
+        loading = false;
+    }
+
+    void CreateNew() => Nav.NavigateTo(uri: "/rentalInfo/0");
+    void Edit(int id) => Nav.NavigateTo(uri: $"/rentalInfo/{id}");
+
+    IEnumerable<DataRental> FilteredRentals =>
+    string.IsNullOrWhiteSpace(searchText)
+    ? ((IEnumerable<DataRental>?)rental ?? Enumerable.Empty<DataRental>())
+    : ((IEnumerable<DataRental>?)rental ?? Enumerable.Empty<DataRental>())
+    .Where(r =>
+    r.RentalID.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase)
+    || (CustomerName(r.CustomerID) ?? "").Contains(searchText, StringComparison.OrdinalIgnoreCase)
+    || (EquipmentName(r.EquipmentID) ?? "").Contains(searchText, StringComparison.OrdinalIgnoreCase)
+    );
+
+    string? CustomerName(int customerId) =>
+    customer?.FirstOrDefault(c => c.CustomerID == customerId) is var c ? c?.Firstname + " " + c?.Lastname : null;
+
+    string? EquipmentName(int equipmentId) =>
+    equipment?.FirstOrDefault(e => e.EquipmentID == equipmentId)?.Name;
+}

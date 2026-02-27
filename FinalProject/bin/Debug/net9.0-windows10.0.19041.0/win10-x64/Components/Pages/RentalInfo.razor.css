@@ -1,0 +1,49 @@
+﻿﻿h3{
+    color: white
+}
+
+.info-card {
+    background: #333;
+    padding: 20px;
+    border-radius: 12px;
+    display: grid;
+    gap: 12px;
+    color: white;
+}
+
+.input {
+    background: #555;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+}
+
+.btn-row {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+}
+
+.save,
+.remove,
+.cancel {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+}
+
+
+.remove {
+    background: #963030;
+}
+
+.save {
+    background: #309635;
+}
+
+.cancel {
+    background: #6658f5;
+}

@@ -1,0 +1,120 @@
+﻿@page "/"
+@using FinalProject.Data
+@using DataCustomer = FinalProject.Data.Customer
+@inject Broker Broker
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+
+<input class="search" placeholder="Find Customer" @bind="searchText" />
+<button class="add-btn" @onclick="AddCustomer">Add New Customer</button>
+
+
+<div class="cust-list">
+    @if (loading)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else if (customers == null || !customers.Any())
+    {
+        <p>No customers found.</p>
+    }
+    else
+    {
+        @foreach (DataCustomer c in FilteredCustomers)
+        {
+            <div class="cust-row">
+                <button class="cust-btn" @onclick="() => EditCustomer(c.CustomerID)">
+                    @c.CustomerID - @c.Firstname @c.Lastname
+                </button>
+
+                <button class="ban-btn" @onclick="() => ToggleBan(c)">
+                    @(c.Banned ? "Unban" : "Ban")
+                </button>
+            </div>
+        }
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <p class="muted">@message</p>
+}
+
+@code {
+    List<DataCustomer>? customers;
+    string searchText = "";
+    bool loading = true;
+    string? message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    async Task Load()
+    {
+        loading = true;
+        message = null;
+        try
+        {
+            customers = await Broker.LoadAllCustomersAsync();
+        }
+        catch (Exception ex)
+        {
+            message = $"Failed loading customers: {ex.Message}";
+            customers = new List<DataCustomer>();
+        }
+        loading = false;
+    }
+
+    IEnumerable<DataCustomer> FilteredCustomers =>
+    string.IsNullOrWhiteSpace(searchText)
+    ? ((IEnumerable<DataCustomer>?)customers ?? Enumerable.Empty<DataCustomer>())
+    : ((IEnumerable<DataCustomer>?)customers ?? Enumerable.Empty<DataCustomer>())
+    .Where(c =>
+    $"{c.Firstname} {c.Lastname}".Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+    c.CustomerID.ToString().Contains(searchText));
+
+    void AddCustomer() => Nav.NavigateTo(uri: "/customerInfo/0");
+    void EditCustomer(int id) => Nav.NavigateTo(uri: $"/customerInfo/{id}");
+
+    async Task ToggleBan(DataCustomer c)
+    {
+        if (c == null) return;
+
+        // Confirm with the user
+        string? action = c.Banned ? "unban" : "ban";
+        bool confirmed = await JS.InvokeAsync<bool>(identifier: "confirm", $"Are you sure you want to {action} {c.Firstname} {c.Lastname} (ID {c.CustomerID})?");
+        if (!confirmed) return;
+
+        try
+        {
+            bool ok;
+            if (c.Banned)
+            {
+                ok = await Broker.UnbanCustomerAsync(c.CustomerID);
+                if (ok) c.Banned = false;
+            }
+            else
+            {
+                ok = await Broker.BanCustomerAsync(c.CustomerID);
+                if (ok) c.Banned = true;
+            }
+
+            if (!ok)
+            {
+                message = $"Failed to {action} customer.";
+            }
+            else
+            {
+                message = $"{c.Firstname} {c.Lastname} was successfully {(c.Banned ? "banned" : "unbanned")}.";
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"Error: {ex.Message}";
+        }
+    }
+}

@@ -1,0 +1,147 @@
+﻿@page "/CustomerInfo/{CustomerID:int}"
+@using FinalProject.Data
+@using DataCustomer = FinalProject.Data.Customer
+@inject Broker Broker
+@inject NavigationManager Nav
+
+<h3>@(isNew ? "Add Customer" : "Edit Customer")</h3>
+
+@if (loading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="info-card">
+
+        <label>ID</label>
+        <input class="input" value="@CustomerID" disabled />
+
+        <label>First Name</label>
+        <input class="input" @bind="customer.Firstname" />
+
+        <label>Last Name</label>
+        <input class="input" @bind="customer.Lastname" />
+
+        <label>Email</label>
+        <input class="input" @bind="customer.Email" />
+
+        <label>Phone</label>
+        <input class="input" @bind="customer.PhoneNumber" />
+
+        @if (!isNew)
+        {
+            <label>Status</label>
+            <input class="input" value="@(customer.Banned ? "BANNED" : "Active")" disabled />
+        }
+    </div>
+
+    <div class="btn-row">
+        <button class="save" @onclick="Save">Save</button>
+
+        @if (!isNew)
+        {
+            <button class="remove" @onclick="Delete">Delete</button>
+        }
+
+        <button class="cancel" @onclick="Cancel">Cancel</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <p class="muted">@message</p>
+    }
+}
+
+@code {
+    [Parameter] public int CustomerID { get; set; }
+
+    DataCustomer customer = new DataCustomer();
+    bool loading = true;
+    string? message;
+    bool isNew => CustomerID == 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        message = null;
+
+        if (isNew)
+        {
+            customer = new DataCustomer();
+        }
+        else
+        {
+            DataCustomer? c = await DataCustomer.SearchCustomerByIdAsync(Broker, CustomerID);
+
+            if (c == null)
+            {
+                message = $"Customer with ID {CustomerID} not found.";
+                customer = new DataCustomer();
+            }
+            else
+            {
+                customer = c;
+            }
+        }
+
+        loading = false;
+    }
+
+    async Task Save()
+    {
+        message = null;
+
+        if (string.IsNullOrWhiteSpace(customer.Firstname) ||
+        string.IsNullOrWhiteSpace(customer.Lastname))
+        {
+            message = "First and last name are required.";
+            return;
+        }
+
+        if (isNew)
+        {
+            int newId = await customer.AddCustomerAsync(Broker);
+
+            if (newId > 0)
+            {
+                Nav.NavigateTo($"/customerInfo/{newId}");
+                return;
+            }
+
+            message = "Failed to create customer. Check constraints.";
+        }
+        else
+        {
+            bool ok = await customer.UpdateCustomerAsync(Broker);
+
+            if (ok)
+            {
+                Nav.NavigateTo(uri: "/");
+                return;
+            }
+
+            message = "Failed to update customer.";
+        }
+    }
+
+    async Task Delete()
+    {
+        message = null;
+
+        if (!isNew)
+        {
+            bool ok = await customer.RemoveCustomerAsync(Broker);
+
+            if (ok)
+            {
+                Nav.NavigateTo(uri: "/");
+                return;
+            }
+
+            message = "Failed to delete customer. They may have rentals.";
+        }
+    }
+
+    void Cancel() => Nav.NavigateTo(uri: "/");
+}

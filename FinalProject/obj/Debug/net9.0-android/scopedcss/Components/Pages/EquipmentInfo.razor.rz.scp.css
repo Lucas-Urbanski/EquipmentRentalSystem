@@ -1,0 +1,49 @@
+﻿h3[b-s59gkptr3l]{
+    color: white
+}
+
+.info-card[b-s59gkptr3l] {
+    background: #333;
+    padding: 20px;
+    border-radius: 12px;
+    display: grid;
+    gap: 12px;
+    color: white;
+}
+
+.input[b-s59gkptr3l] {
+    background: #555;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+}
+
+.btn-row[b-s59gkptr3l] {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+}
+
+.save[b-s59gkptr3l],
+.remove[b-s59gkptr3l],
+.cancel[b-s59gkptr3l] {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+}
+
+
+.remove[b-s59gkptr3l] {
+    background: #963030;
+}
+
+.save[b-s59gkptr3l] {
+    background: #309635;
+}
+
+.cancel[b-s59gkptr3l] {
+    background: #6658f5;
+}

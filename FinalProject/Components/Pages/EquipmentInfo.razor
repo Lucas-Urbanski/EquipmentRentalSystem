@@ -1,0 +1,146 @@
+﻿@page "/equipmentInfo/{EquipmentID:int}"
+@using FinalProject.Data
+@using DataEquipment = FinalProject.Data.Equipment
+@inject Broker Broker
+@inject NavigationManager Nav
+
+
+<h3>@(isNew ? "Add Equipment" : $"Edit Equipment")</h3>
+
+@if (loading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="info-card">
+        <input class="input" id="equipmentId" value="@EquipmentID" disabled />
+        <input class="input" id="categoryId" type="number" @bind:event="oninput" @bind="equipment.CategoryID"
+            placeholder="e.g., 1 (Tools)" />
+        <select class="input" @bind="equipment.CategoryID">
+            @foreach (Category c in categories)
+            {
+                <option class="input" value="@c.CategoryID">@c.Type</option>
+            }
+        </select>
+        <input class="input" id="name" type="text" @bind="equipment.Name" placeholder="e.g., Heavy Duty Excavator" />
+        <textarea class="input" id="description" @bind="equipment.Description"
+            placeholder="Detailed description of the equipment..."></textarea>
+        <input class="input" id="rate" type="number" @bind:event="oninput" @bind="equipment.DailyRate" step="0.01"
+            placeholder="daily rate" />
+        <div class="checkbox">
+            <input class="input" id="status" type="checkbox" @bind="equipment.Status" />
+            <label for="status">
+                @(equipment.Status ? "Available" : "Unavailable")
+            </label>
+        </div>
+    </div>
+
+    <div class="btn-row">
+        <button class="save" @onclick="Save">Save</button>
+        @if (!isNew)
+        {
+            <button class="remove" @onclick="Delete">Delete</button>
+        }
+        <button class="cancel" @onclick="Cancel">Cancel</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <p class="muted">@message</p>
+    }
+}
+
+
+@code {
+    [Parameter] public int EquipmentID { get; set; }
+
+    List<Category> categories = new List<Category>();
+    DataEquipment equipment = new DataEquipment();
+
+    bool loading = true;
+    string? message;
+    bool isNew => EquipmentID == 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    async Task Load()
+    {
+        loading = true;
+        message = null;
+
+        categories = await Broker.LoadAllCategoriesAsync();
+
+        if (isNew)
+        {
+            equipment = new DataEquipment { Status = true, DailyRate = 0m };
+
+            if (categories.Any())
+                equipment.CategoryID = categories.First().CategoryID;
+        }
+        else
+        {
+            DataEquipment? e = await DataEquipment.SearchEquipmentByIdAsync(Broker, EquipmentID);
+
+            if (e == null)
+            {
+                message = $"Equipment with ID {EquipmentID} not found.";
+                equipment = new DataEquipment();
+            }
+            else
+            {
+                equipment = e;
+            }
+        }
+        loading = false;
+    }
+
+    async Task Save()
+    {
+        message = null;
+
+        if (string.IsNullOrWhiteSpace(equipment.Name) || equipment.DailyRate <= 0)
+        {
+            message = "Equipment Name and a Daily Rate greater than $0.00 are required.";
+            return;
+        }
+
+        if (isNew)
+        {
+            int newId = await equipment.AddEquipmentAsync(Broker);
+            if (newId > 0)
+            {
+                Nav.NavigateTo(uri: $"/equipmentInfo/{newId}");
+                return;
+            }
+            message = "Failed to create equipment.";
+        }
+        else
+        {
+            bool ok = await equipment.UpdateEquipmentAsync(Broker);
+            if (ok)
+            {
+                Nav.NavigateTo(uri: "/equipment");
+                return;
+            }
+            message = "Failed to save changes. Equipment ID might be invalid.";
+        }
+    }
+
+    async Task Delete()
+    {
+        message = null;
+
+        if (!isNew)
+        {
+            bool ok = await equipment.RemoveEquipmentAsync(Broker);
+            if (ok) Nav.NavigateTo(uri: "/equipment");
+            else message = "Failed to delete equipment. It may have existing rentals.";
+        }
+    }
+
+    void Cancel() => Nav.NavigateTo(uri: "/equipment");
+}

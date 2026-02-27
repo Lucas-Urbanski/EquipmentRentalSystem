@@ -1,0 +1,246 @@
+﻿@page "/rentalInfo/{RentalID:int}"
+@using FinalProject.Data
+@using DataRental = FinalProject.Data.Rental
+@using DataEquipment = FinalProject.Data.Equipment
+@using DataCustomer = FinalProject.Data.Customer
+@inject FinalProject.Data.Broker Broker
+@inject NavigationManager Nav
+
+<h3>@(isNew ? "Add Rental" : $"Edit Rental")</h3>
+
+@if (loading)
+{
+    <p><em>Loading data...</em></p>
+}
+else
+{
+
+    <div class="info-card">
+        <label>Rental ID</label>
+        <input class="input" value="@RentalID" disabled />
+        <input class="input" value="@displayDailyRate.ToString(format: "C2")" disabled />
+        <select class="input" id="customerId" @bind="rental.CustomerID">
+            @if (customers.Count == 0)
+            {
+                <option class="input" value="0" disabled>-- No customers available --</option>
+            }
+            else
+            {
+                @foreach (DataCustomer c in customers)
+                {
+                    <option class="input" value="@c.CustomerID">@c.CustomerID - @c.Firstname @c.Lastname</option>
+                }
+            }
+        </select>
+        <select class="input" id="equipmentId" @bind:after="OnEquipmentChanged" @bind="selectedEquipmentId">
+            <option class="input" value="0">-- Select Equipment --</option>
+            @foreach (DataEquipment e in availableEquipment)
+            {
+                <option class="input" value="@e.EquipmentID">@e.EquipmentID - @e.Name</option>
+            }
+            @if (!isNew && equipment.Any(e => e.EquipmentID == rental.EquipmentID))
+            {
+                DataEquipment? current = equipment.First(e => e.EquipmentID == rental.EquipmentID);
+                if (!availableEquipment.Any(a => a.EquipmentID == current.EquipmentID))
+                {
+                    <option class="input" value="@current.EquipmentID" selected>@current.EquipmentID - @current.Name (Currently Rented)</option>
+                }
+            }
+        </select>
+        <input class="input" id="rentalDate" type="date" @bind="rental.RentalDate" @bind:format="yyyy-MM-dd"
+            @bind:after="OnRentalDateChanged" />
+        <input class="input" id="returnDate" type="date" @bind="rental.ReturnDate" @bind:format="yyyy-MM-dd"
+            @bind:after="OnRentalDateChanged" />
+        <input class="input" value="@rental.TotalCost.ToString(format: "C2")" disabled />
+    </div>
+
+    <div class="btn-row">
+        <button class="save" @onclick="Save">Save</button>
+        @if (!isNew)
+        {
+            <button class="remove" @onclick="Delete">Delete</button>
+        }
+        <button class="cancel" @onclick="Cancel">Cancel</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <p class="muted">@message</p>
+    }
+
+}
+
+
+@code {
+    [Parameter] public int RentalID { get; set; }
+
+    DataRental rental = new DataRental();
+
+    List<DataCustomer> customers = new List<DataCustomer>();
+
+    List<DataEquipment> equipment = new List<DataEquipment>();
+    List<DataEquipment> availableEquipment = new List<DataEquipment>();
+    bool loading = true;
+    string? message;
+    bool isNew => RentalID == 0;
+
+    decimal displayDailyRate = 0m;
+
+    int selectedEquipmentId = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    async Task Load()
+    {
+        loading = true;
+        message = null;
+
+        customers = await Broker.LoadAllCustomersAsync();
+        equipment = await Broker.LoadAllEquipmentAsync();
+        availableEquipment = equipment.Where(e => e.Status).ToList();
+
+        if (isNew)
+        {
+            rental = new DataRental
+            {
+                RentalDate = DateTime.Today,
+                ReturnDate = DateTime.Today.AddDays(value: 1),
+                TotalCost = 0m,
+                CustomerID = customers.FirstOrDefault()?.CustomerID ?? 0
+            };
+        }
+        else
+        {
+            DataRental? r = await DataRental.SearchRentalByIdAsync(Broker, RentalID);
+
+            if (r == null)
+            {
+                message = $"Rental with ID {RentalID} not found.";
+                rental = new DataRental();
+            }
+            else
+            {
+                rental = r;
+                selectedEquipmentId = rental.EquipmentID;
+            }
+        }
+
+        DataEquipment? selectedEq = equipment.FirstOrDefault(x => x.EquipmentID == selectedEquipmentId);
+        displayDailyRate = selectedEq?.DailyRate ?? 0m;
+
+        RecalculateTotal();
+
+        loading = false;
+    }
+
+    void OnEquipmentChanged()
+    {
+        if (selectedEquipmentId > 0)
+        {
+            rental.EquipmentID = selectedEquipmentId;
+
+            DataEquipment? eq = equipment.FirstOrDefault(x => x.EquipmentID == selectedEquipmentId);
+            displayDailyRate = eq?.DailyRate ?? 0m;
+        }
+        else
+        {
+            displayDailyRate = 0m;
+        }
+
+        RecalculateTotal();
+        StateHasChanged();
+    }
+
+    void OnRentalDateChanged()
+    {
+        RecalculateTotal();
+        StateHasChanged();
+    }
+
+    void RecalculateTotal()
+    {
+        if (selectedEquipmentId == 0 || rental.RentalDate == default || !rental.ReturnDate.HasValue)
+        {
+            rental.TotalCost = 0m;
+            return;
+        }
+
+        DataEquipment? eq = equipment.FirstOrDefault(x => x.EquipmentID == selectedEquipmentId);
+        decimal rate = eq?.DailyRate ?? 0m;
+
+        DateTime rentalDate = rental.RentalDate.Date;
+        DateTime returnDate = rental.ReturnDate.Value.Date;
+
+        if (returnDate < rentalDate)
+        {
+            message = "Return date cannot be before the rental date.";
+            rental.TotalCost = 0m;
+            return;
+        }
+
+        message = null;
+
+        double days = (returnDate - rentalDate).TotalDays;
+        if (days < 1) days = 1;
+
+        rental.TotalCost = Math.Round((decimal)days * rate, decimals: 2);
+        displayDailyRate = rate;
+    }
+
+    async Task Save()
+    {
+        RecalculateTotal();
+        message = null;
+
+        if (rental.CustomerID <= 0 || selectedEquipmentId == 0 || rental.TotalCost <= 0)
+        {
+            message = "Please ensure a customer, equipment, and valid dates are selected.";
+            return;
+        }
+
+        rental.EquipmentID = selectedEquipmentId;
+
+        if (isNew)
+        {
+            int newId = await rental.StartRentalAsync(Broker);
+            if (newId > 0)
+            {
+                Nav.NavigateTo(uri: $"/rentalInfo/{newId}");
+                return;
+            }
+            message = "Failed to create rental.";
+        }
+        else
+        {
+            bool ok = await rental.UpdateRentalAsync(Broker);
+            if (ok)
+            {
+                Nav.NavigateTo(uri: "/rental");
+                return;
+            }
+            message = "Failed to save rental changes.";
+        }
+    }
+
+    async Task Delete()
+    {
+        message = null;
+        if (!isNew)
+        {
+            bool ok = await rental.RemoveRentalAsync(Broker, makeEquipmentAvailable: true);
+            if (ok)
+            {
+                Nav.NavigateTo(uri: "/rental");
+            }
+            else
+            {
+                message = "Failed to delete rental.";
+            }
+        }
+    }
+
+    void Cancel() => Nav.NavigateTo(uri: "/rental");
+}

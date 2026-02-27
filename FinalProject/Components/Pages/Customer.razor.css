@@ -1,0 +1,68 @@
+﻿.search {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #0f1f24;
+    color: white;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.add-btn { 
+    flex: 1;
+    width: 100%;
+    background: #6759FF;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.cust-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cust-btn {
+    width: 100%;
+    padding: 18px;
+    background: #3b3b3b;
+    border: none;
+    border-radius: 10px;
+    text-align: left;
+    font-size: 16px;
+    color: white;
+}
+
+.cust-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.ban-btn {
+    width: 120px; 
+    background: #d9534f;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    color: white;
+}
+
+.ban-btn:hover {
+    background: #c3423f;
+    cursor: pointer;
+}
+
+.ban-btn.unban {
+    background: #2ecc71;
+}
+
+.ban-btn.unban:hover {
+    background: #27ae60;
+}
