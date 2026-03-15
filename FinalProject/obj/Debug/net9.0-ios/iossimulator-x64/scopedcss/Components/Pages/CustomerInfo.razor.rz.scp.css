@@ -1,0 +1,49 @@
+﻿h3[b-c1v45fncx2]{
+    color: white
+}
+
+.info-card[b-c1v45fncx2] {
+    background: #333;
+    padding: 20px;
+    border-radius: 12px;
+    display: grid;
+    gap: 12px;
+    color: white;
+}
+
+.input[b-c1v45fncx2] {
+    background: #555;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+}
+
+.btn-row[b-c1v45fncx2] {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+}
+
+.save[b-c1v45fncx2],
+.remove[b-c1v45fncx2],
+.cancel[b-c1v45fncx2] {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+}
+
+
+.remove[b-c1v45fncx2] {
+    background: #963030;
+}
+
+.save[b-c1v45fncx2] {
+    background: #309635;
+}
+
+.cancel[b-c1v45fncx2] {
+    background: #6658f5;
+}

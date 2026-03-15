@@ -13,11 +13,11 @@ namespace FinalProject.Data
             // Uses NpgsqlConnectionStringBuilder to construct the connection string securely.
             var builder = new NpgsqlConnectionStringBuilder
             {
-                Host = "localhost", // Specifies the database server address.
-                Port = 5432,        // Specifies the PostgreSQL default port.
-                Username = "postgres", // Specifies the database user name.
-                Password = "admin",    // Specifies the password for the database user.
-                Database = "rental_db" // Specifies the database name to connect to.
+                Host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost",
+                Port = 5432,
+                Username = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres",
+                Password = Environment.GetEnvironmentVariable("DB_PASSWORD"),
+                Database = Environment.GetEnvironmentVariable("DB_NAME") ?? "rental_db"
             };
 
             // Stores the constructed connection string.

@@ -593,3 +593,4 @@ C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\compressed\vwbzdmzz19-hn58z8z844.gz
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\compressed\publish\j4yzyuq5p9-hn58z8z844.br
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\compressed\publish\vwbzdmzz19-hn58z8z844.br
+C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\FinalProject.sourcelink.json
