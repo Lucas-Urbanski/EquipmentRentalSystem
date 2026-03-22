@@ -95,7 +95,7 @@ Example local setup:
 
 3. Run the application
 - dotnet build
-- dotnet maui run
+- dotnet run
 
 **Engineering Concepts Demonstrated**
 - Cross-platform application development
