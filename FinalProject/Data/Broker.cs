@@ -10,14 +10,23 @@ namespace FinalProject.Data
         // Constructor: Initializes the connection string.
         public Broker()
         {
+            // Loads environment variables from a .env file if present.
+            DotNetEnv.Env.Load(); 
+
+            var host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
+            var user = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
+            var pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            var db = Environment.GetEnvironmentVariable("DB_NAME") ?? "rental_db";
+            
             // Uses NpgsqlConnectionStringBuilder to construct the connection string securely.
             var builder = new NpgsqlConnectionStringBuilder
             {
-                Host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost",
+                Host = host,
                 Port = 5432,
-                Username = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres",
-                Password = Environment.GetEnvironmentVariable("DB_PASSWORD"),
-                Database = Environment.GetEnvironmentVariable("DB_NAME") ?? "rental_db"
+                Username = user,
+                Password = pass,
+                Database = db,
+                Pooling = true
             };
 
             // Stores the constructed connection string.

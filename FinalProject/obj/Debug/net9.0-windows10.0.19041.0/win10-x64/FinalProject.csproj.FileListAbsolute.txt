@@ -452,10 +452,6 @@ C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\bin\Debug\net9.0
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\Microsoft.UI.pri
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\Microsoft.UI.Xaml.Controls.pri
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\FinalProject.csproj.AssemblyReference.cache
-C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\rpswa.dswa.cache.json
-C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\rjimswa.dswa.cache.json
-C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\rjsmrazor.dswa.cache.json
-C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\rjsmcshtml.dswa.cache.json
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\scopedcss\Components\Pages\Customer.razor.rz.scp.css
@@ -464,7 +460,6 @@ C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\scopedcss\bundle\FinalProject.styles.css
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\scopedcss\projectbundle\FinalProject.bundle.scp.css
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\staticwebassets.build.json
-C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\staticwebassets.build.json.cache
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\staticwebassets.development.json
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\staticwebassets.build.endpoints.json
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\staticwebassets\msbuild.FinalProject.Microsoft.AspNetCore.StaticWebAssets.props
@@ -594,3 +589,5 @@ C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\compressed\publish\j4yzyuq5p9-hn58z8z844.br
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\compressed\publish\vwbzdmzz19-hn58z8z844.br
 C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\FinalProject.sourcelink.json
+C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\DotNetEnv.dll
+C:\Users\Lucas\SAIT\Software Analysis\FinalProject\FinalProject\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\Sprache.dll
