@@ -5,7 +5,8 @@ namespace FinalProject.Data
     // A class responsible for handling database operations.
     public class Broker
     {
-        private readonly string _connectionString; // Field to store the database connection string.
+        // Field to store the database connection string.
+        private readonly string _connectionString; 
 
         // Constructor: Initializes the connection string.
         public Broker()
